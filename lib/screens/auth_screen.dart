@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/services/users_service.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -41,13 +42,15 @@ class AuthCard extends StatefulWidget {
   _AuthCardState createState() => _AuthCardState();
 }
 
+class LoginModel {
+  String email = '';
+  String password = '';
+}
+
 class _AuthCardState extends State<AuthCard> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
-  Map<String, String> _authData = {
-    'email': '',
-    'password': '',
-  };
+  final LoginModel _authData = LoginModel();
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
@@ -80,8 +83,9 @@ class _AuthCardState extends State<AuthCard> {
                         ? 'Do not use the @ char.'
                         : null;
                   },
-                  onSaved: (value) {
-                    value == null ? () {} : _authData['email'] = value;
+                  onChanged: (value) {
+                    print('onsasved');
+                    _authData.email = value;
                     //  TODO(Changing something with (){});
                   },
                 ),
@@ -101,8 +105,8 @@ class _AuthCardState extends State<AuthCard> {
                         ? 'assword is too short!'
                         : null;
                   },
-                  onSaved: (value) {
-                    value == null ? () {} : _authData['password'] = value;
+                  onChanged: (value) {
+                    _authData.password = value;
                     //  TODO(Changing something with (){});
                   },
                 ),
@@ -128,7 +132,14 @@ class _AuthCardState extends State<AuthCard> {
                   RaisedButton(
                       child: Text(
                           _authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
-                      onPressed: () {},
+                      onPressed: () {
+                        print(this._authData.email);
+                        var result = UsersService().login(
+                            this._authData.email, this._authData.password);
+                        result.then(
+                            (value) => Navigator.pushNamed(context, '/board'));
+                        // Navigator.pushNamed(context, '/board');
+                      },
                       // _submit,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),

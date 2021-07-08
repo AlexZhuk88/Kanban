@@ -27,3 +27,17 @@ class CardItem {
     );
   }
 }
+
+class LoginResult {
+  final String token;
+
+  LoginResult({
+    required this.token,
+  });
+
+  factory LoginResult.fromJson(Map<String, dynamic> json) {
+    return LoginResult(
+      token: json['token'],
+    );
+  }
+}
