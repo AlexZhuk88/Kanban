@@ -15,7 +15,7 @@ class OnHoldScreen extends StatelessWidget {
       'Authorization':
           'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyMzksInVzZXJuYW1lIjoiYXJtYWRhIiwiZXhwIjoxNjI1Nzc0NTI4LCJlbWFpbCI6IiIsIm9yaWdfaWF0IjoxNjI1NzcwOTI4fQ.Gv9LJBGM7CvFxFAdsEYT4q98Jiz7uAQYXFwuHIDufwk'
     });
-    return parseCards(response.body);
+    return parseCards(utf8.decode(response.bodyBytes));
   }
 
   List<CardItem> parseCards(String responseBody) {
