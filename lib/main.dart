@@ -1,23 +1,83 @@
 import 'package:flutter/material.dart';
-import 'package:kanban/screens/kaban_screen.dart';
-import 'screens/auth_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/authentication/bloc/authentication_bloc.dart';
+import 'package:kanban/authentication_repository.dart';
+import 'package:kanban/home/home.dart';
+import 'package:kanban/login/view/login_page.dart';
+import 'package:kanban/splash/view/splash_page.dart';
+//import 'package:kanban/screens/bloc.dart';
+import 'package:kanban/user_repository.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MyApp(
+    authenticationRepository: AuthenticationRepository(),
+    userRepository: UserRepository(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({
+    Key? key,
+    required this.authenticationRepository,
+    required this.userRepository,
+  }) : super(key: key);
+
+  final AuthenticationRepository authenticationRepository;
+  final UserRepository userRepository;
+
+  @override
+  Widget build(BuildContext context) {
+    return RepositoryProvider.value(
+      value: authenticationRepository,
+      child: BlocProvider(
+        create: (_) => AuthenticationBloc(
+          authenticationRepository: authenticationRepository,
+          userRepository: userRepository,
+        ),
+        child: AppView(),
+      ),
+    );
+  }
+}
+
+class AppView extends StatefulWidget {
+  @override
+  _AppViewState createState() => _AppViewState();
+}
+
+class _AppViewState extends State<AppView> {
+  final _navigatorKey = GlobalKey<NavigatorState>();
+
+  NavigatorState get _navigator => _navigatorKey.currentState!;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      routes: {
-        '/': (context) => AuthScreen(),
-        '/board': (context) => KabanScreen(),
+      navigatorKey: _navigatorKey,
+      builder: (context, child) {
+        return BlocListener<AuthenticationBloc, AuthenticationState>(
+          listener: (context, state) {
+            switch (state.status) {
+              case AuthenticationStatus.authenticated:
+                _navigator.pushAndRemoveUntil<void>(
+                  HomePage.route(),
+                  (route) => false,
+                );
+                break;
+              case AuthenticationStatus.unauthenticated:
+                _navigator.pushAndRemoveUntil<void>(
+                  LoginPage.route(),
+                  (route) => false,
+                );
+                break;
+              default:
+                break;
+            }
+          },
+          child: child,
+        );
       },
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      onGenerateRoute: (_) => SplashPage.route(),
     );
   }
 }

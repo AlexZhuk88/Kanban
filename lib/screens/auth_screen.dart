@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:kanban/services/users_service.dart';
 
@@ -138,9 +140,7 @@ class _AuthCardState extends State<AuthCard> {
                             this._authData.email, this._authData.password);
                         result.then(
                             (value) => Navigator.pushNamed(context, '/board'));
-                        // Navigator.pushNamed(context, '/board');
                       },
-                      // _submit,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
