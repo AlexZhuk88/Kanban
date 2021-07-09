@@ -1,8 +1,8 @@
 class RowValue {
-  static String one = '0';
-  static String two = '1';
-  static String three = '2';
-  static String four = '3';
+  static String onHold = '0';
+  static String inProgress = '1';
+  static String needsReview = '2';
+  static String approved = '3';
 }
 
 class CardItem {
