@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kanban/authentication/bloc/authentication_bloc.dart';
 import 'package:kanban/screens/approved_screen.dart';
 import 'package:kanban/screens/in_progress_screen.dart';
 import 'package:kanban/screens/needs_review_screen.dart';
 import 'package:kanban/screens/on_hold_screen.dart';
 
-class KabanScreen extends StatefulWidget {
-  @override
-  _KabanScreenState createState() => _KabanScreenState();
-}
+class HomePage extends StatelessWidget {
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => HomePage());
+  }
 
-class _KabanScreenState extends State<KabanScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: IconButton(onPressed: () {}, icon: Icon(Icons.exit_to_app)),
+          title: IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticationLogoutRequested());
+            },
+          ),
           bottom: TabBar(
             tabs: <Widget>[
               Tab(

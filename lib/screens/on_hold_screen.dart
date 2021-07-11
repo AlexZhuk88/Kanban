@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:kanban/authentication/bloc/authentication_bloc.dart';
 import 'package:kanban/models/task.dart';
 import 'package:kanban/services/cards_service.dart';
 
 import '../widgets/card_task.dart';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 class OnHoldScreen extends StatelessWidget {
   final cardsService = CardsService();
   Widget build(BuildContext context) {
-    print('build OnHoldScreen');
+    final token = context.select(
+      (AuthenticationBloc bloc) => bloc.state.user.token,
+    );
     return FutureBuilder<List<CardItem>>(
-      future: cardsService.getCards(RowValue.onHold),
+      future: cardsService.getCards(token, RowValue.onHold),
       builder: (context, snapshot) {
         if (snapshot.hasError)
           print('OnHoldScreen snapshot.hasError: ${snapshot.error}');
