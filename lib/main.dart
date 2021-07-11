@@ -5,7 +5,6 @@ import 'package:kanban/authentication_repository.dart';
 import 'package:kanban/home/home.dart';
 import 'package:kanban/login/view/login_page.dart';
 import 'package:kanban/splash/view/splash_page.dart';
-//import 'package:kanban/screens/bloc.dart';
 import 'package:kanban/user_repository.dart';
 
 void main() {

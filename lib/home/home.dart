@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/authentication/bloc/authentication_bloc.dart';
+import 'package:kanban/screens/approved_screen.dart';
+import 'package:kanban/screens/in_progress_screen.dart';
+import 'package:kanban/screens/needs_review_screen.dart';
+import 'package:kanban/screens/on_hold_screen.dart';
+import 'package:kanban/services/global_state.dart';
 
 class HomePage extends StatelessWidget {
   static Route route() {
@@ -9,28 +14,42 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(
+          title: IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: () {
+              GlobalState.token = '';
+              context
+                  .read<AuthenticationBloc>()
+                  .add(AuthenticationLogoutRequested());
+            },
+          ),
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(
+                text: 'On hold',
+              ),
+              Tab(
+                text: 'In progress',
+              ),
+              Tab(
+                text: 'Needs review',
+              ),
+              Tab(
+                text: 'Approved',
+              ),
+            ],
+          ),
+        ),
+        body: TabBarView(
           children: <Widget>[
-            Builder(
-              builder: (context) {
-                final userId = context.select(
-                  (AuthenticationBloc bloc) => bloc.state.user.id,
-                );
-                return Text('UserID: $userId');
-              },
-            ),
-            ElevatedButton(
-              child: const Text('Logout'),
-              onPressed: () {
-                context
-                    .read<AuthenticationBloc>()
-                    .add(AuthenticationLogoutRequested());
-              },
-            ),
+            OnHoldScreen(),
+            InProgressScreen(),
+            NeedsReviewScreen(),
+            ApprovedScreen()
           ],
         ),
       ),
