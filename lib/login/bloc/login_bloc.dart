@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:formz/formz.dart';
 import 'package:kanban/authentication_repository.dart';
 import 'package:kanban/login/models/models.dart';
+import 'package:kanban/services/users_service.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -21,10 +22,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   Stream<LoginState> mapEventToState(
     LoginEvent event,
   ) async* {
-    if (event is LoginUsernameChanged) {
-      yield _mapUsernameChangedToState(event, state);
-    } else if (event is LoginPasswordChanged) {
+    if (event is LoginPasswordChanged) {
       yield _mapPasswordChangedToState(event, state);
+    } else if (event is LoginUsernameChanged) {
+      yield _mapUsernameChangedToState(event, state);
     } else if (event is LoginSubmitted) {
       yield* _mapLoginSubmittedToState(event, state);
     }
@@ -35,6 +36,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     LoginState state,
   ) {
     final username = Username.dirty(event.username);
+
     return state.copyWith(
       username: username,
       status: Formz.validate([state.password, username]),
@@ -59,13 +61,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (state.status.isValidated) {
       yield state.copyWith(status: FormzStatus.submissionInProgress);
       try {
-        await _authenticationRepository.logIn(
-          username: state.username.value,
-          password: state.password.value,
-        );
-        _authenticationRepository.setUser(event.token);
+        var token = await UsersService()
+            .login(state.username.value, state.password.value);
+
+        _authenticationRepository.logIn(token);
         yield state.copyWith(status: FormzStatus.submissionSuccess);
-      } on Exception catch (_) {
+      } catch (e) {
         yield state.copyWith(status: FormzStatus.submissionFailure);
       }
     }

@@ -11,10 +11,6 @@ class AuthenticationRepository {
     return _user;
   }
 
-  void setUser(String token) {
-    this._user = User(token);
-  }
-
   final _controller = StreamController<AuthenticationStatus>();
 
   Stream<AuthenticationStatus> get status async* {
@@ -23,14 +19,9 @@ class AuthenticationRepository {
     yield* _controller.stream;
   }
 
-  Future<void> logIn({
-    required String username,
-    required String password,
-  }) async {
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-      () => _controller.add(AuthenticationStatus.authenticated),
-    );
+  void logIn(String token) {
+    this._user = User(token);
+    _controller.add(AuthenticationStatus.authenticated);
   }
 
   void logOut() {
