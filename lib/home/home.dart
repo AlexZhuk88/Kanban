@@ -5,7 +5,6 @@ import 'package:kanban/screens/approved_screen.dart';
 import 'package:kanban/screens/in_progress_screen.dart';
 import 'package:kanban/screens/needs_review_screen.dart';
 import 'package:kanban/screens/on_hold_screen.dart';
-import 'package:kanban/services/global_state.dart';
 
 class HomePage extends StatelessWidget {
   static Route route() {
@@ -21,7 +20,6 @@ class HomePage extends StatelessWidget {
           title: IconButton(
             icon: Icon(Icons.exit_to_app),
             onPressed: () {
-              GlobalState.token = '';
               context
                   .read<AuthenticationBloc>()
                   .add(AuthenticationLogoutRequested());

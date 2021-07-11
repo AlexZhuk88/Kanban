@@ -5,12 +5,10 @@ import 'package:kanban/authentication_repository.dart';
 import 'package:kanban/home/home.dart';
 import 'package:kanban/login/view/login_page.dart';
 import 'package:kanban/splash/view/splash_page.dart';
-import 'package:kanban/user_repository.dart';
 
 void main() {
   runApp(MyApp(
     authenticationRepository: AuthenticationRepository(),
-    userRepository: UserRepository(),
   ));
 }
 
@@ -18,11 +16,9 @@ class MyApp extends StatelessWidget {
   const MyApp({
     Key? key,
     required this.authenticationRepository,
-    required this.userRepository,
   }) : super(key: key);
 
   final AuthenticationRepository authenticationRepository;
-  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +27,6 @@ class MyApp extends StatelessWidget {
       child: BlocProvider(
         create: (_) => AuthenticationBloc(
           authenticationRepository: authenticationRepository,
-          userRepository: userRepository,
         ),
         child: AppView(),
       ),

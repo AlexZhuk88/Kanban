@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:kanban/login/bloc/login_bloc.dart';
 import 'package:formz/formz.dart';
-import 'package:kanban/services/global_state.dart';
 import 'package:kanban/services/users_service.dart';
 
 class LoginForm extends StatelessWidget {
@@ -49,8 +47,10 @@ class _UsernameInput extends StatelessWidget {
       builder: (context, state) {
         return TextField(
           key: const Key('loginForm_usernameInput_textField'),
-          onChanged: (username) =>
-              context.read<LoginBloc>().add(LoginUsernameChanged(username)),
+          onChanged: (username) => {
+            context.read<LoginBloc>().add(LoginUsernameChanged(username)),
+            print(username)
+          },
           decoration: InputDecoration(
             hintText: 'Enter your username',
             border: OutlineInputBorder(
@@ -109,9 +109,9 @@ class _LoginButton extends StatelessWidget {
                 onPressed: state.status.isValidated
                     ? () async {
                         try {
-                          await UsersService().login(
+                          var result = await UsersService().login(
                               state.username.value, state.password.value);
-                          context.read<LoginBloc>().add(LoginSubmitted());
+                          context.read<LoginBloc>().add(LoginSubmitted(result));
                         } catch (error) {
                           final snackBar = SnackBar(
                             content: Text(

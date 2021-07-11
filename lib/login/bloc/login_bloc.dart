@@ -63,6 +63,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           username: state.username.value,
           password: state.password.value,
         );
+        _authenticationRepository.setUser(event.token);
         yield state.copyWith(status: FormzStatus.submissionSuccess);
       } on Exception catch (_) {
         yield state.copyWith(status: FormzStatus.submissionFailure);

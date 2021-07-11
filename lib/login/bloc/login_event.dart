@@ -26,5 +26,9 @@ class LoginPasswordChanged extends LoginEvent {
 }
 
 class LoginSubmitted extends LoginEvent {
-  const LoginSubmitted();
+  const LoginSubmitted(this.token);
+  final String token;
+
+  @override
+  List<Object> get props => [token];
 }

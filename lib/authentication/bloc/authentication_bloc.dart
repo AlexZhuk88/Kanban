@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:kanban/authentication_repository.dart';
-import 'package:kanban/user_repository.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -12,9 +11,7 @@ class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   AuthenticationBloc({
     required AuthenticationRepository authenticationRepository,
-    required UserRepository userRepository,
   })  : _authenticationRepository = authenticationRepository,
-        _userRepository = userRepository,
         super(const AuthenticationState.unknown()) {
     _authenticationStatusSubscription = _authenticationRepository.status.listen(
       (status) => add(AuthenticationStatusChanged(status)),
@@ -22,7 +19,6 @@ class AuthenticationBloc
   }
 
   final AuthenticationRepository _authenticationRepository;
-  final UserRepository _userRepository;
   late StreamSubscription<AuthenticationStatus>
       _authenticationStatusSubscription;
 
@@ -51,7 +47,7 @@ class AuthenticationBloc
       case AuthenticationStatus.unauthenticated:
         return const AuthenticationState.unauthenticated();
       case AuthenticationStatus.authenticated:
-        final user = await _tryGetUser();
+        final user = _tryGetUser();
         return user != null
             ? AuthenticationState.authenticated(user)
             : const AuthenticationState.unauthenticated();
@@ -60,12 +56,7 @@ class AuthenticationBloc
     }
   }
 
-  Future<User?> _tryGetUser() async {
-    try {
-      final user = await _userRepository.getUser();
-      return user;
-    } on Exception {
-      return null;
-    }
+  User? _tryGetUser() {
+    return _authenticationRepository.getUser();
   }
 }
